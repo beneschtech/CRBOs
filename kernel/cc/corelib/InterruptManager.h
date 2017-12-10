@@ -8,6 +8,13 @@
     void isrname()
 
 #define ISR_ADDR(isrname) &::InterruptManager::ISR##isrname
+
+class Driver;
+struct irqChainDef {
+    u8 nHooks;
+    void(*hooks[24])();
+};
+
 class Kernel;
 class InterruptManager
 {
@@ -18,10 +25,16 @@ public:
     void setISR(u8 inum,void (InterruptManager::*isr)());
     void setISR(u8 inum,u64 isr,u16 segment=0x28);
     void renewIDT();
-
+    void setupIRQs();
+    void addDriverToIRQChain(u8 irq,void *ptr);
+    struct irqChainDef *irqTbl[32];
+    static void irqChain(u64 irqno);
 private:
     void init();
     void nullISR();
+
+    void _irqEntry1();
+
     ISR_FUNCTION(isr0);
     ISR_FUNCTION(isr1);
     ISR_FUNCTION(isr2);

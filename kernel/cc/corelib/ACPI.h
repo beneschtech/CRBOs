@@ -40,7 +40,6 @@ class ACPI
 public:
     ACPI() {}
     ~ACPI() {}
-    APIC *apic;
 
 private:
     void init();

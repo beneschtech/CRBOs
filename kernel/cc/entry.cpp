@@ -10,10 +10,8 @@ void _start()
     _mallocBase <<= 5;
     KernelInstance = new Kernel();
     KernelInstance->boot();
-    KernelInstance->acpi.apic->startLocalApic();
 
-    KernelInstance->acpi.apic->setIRQVector(1,0x21,false);
-    KernelInstance->console.printf("Press any key to end (and test IRQ1 through the APIC)...\n");
-    asm volatile ("hlt");
+    while(1) asm volatile("hlt");
+
     delete KernelInstance;
 }

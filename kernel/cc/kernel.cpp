@@ -1,5 +1,6 @@
 #include <CRBOs.h>
 #include <corelib/krnlsyms.h>
+#include <drv/Keyboard.h>
 
 Kernel *KernelInstance;
 void _start();
@@ -22,6 +23,10 @@ void Kernel::boot()
     mem.init();
     interrupts.init();
     acpi.init();
+    interrupts.setupIRQs();
+    rootDriver = new DriverRoot();
+    console.printf("Probing Devices\n");
+    rootDriver->init();
 }
 
 const char *_functionForAddr(u64 addr)

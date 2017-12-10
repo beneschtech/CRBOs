@@ -100,7 +100,18 @@ CMP DWORD [stackStart],0
 JNZ .itsLoaded
    MOV DWORD [stackStart],EDI
 .itsLoaded:
+SUB BX,28
+CMP DWORD [BX],8
+JNE .doCopy
+.clrLoop:
+MOV BYTE [FS:EDI],0
+INC EDI
+LOOP .clrLoop
+JMP .noCopy
+.doCopy:
 CALL copyData
+.noCopy:
+ADD BX,28
 CMP DWORD [mallocStart],EDI
 JNC .elSkipSection
 MOV DWORD [mallocStart],EDI

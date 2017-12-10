@@ -7,6 +7,7 @@
 #include <mem/MMU.h>
 #include <corelib/InterruptManager.h>
 #include <corelib/VTConsole.h>
+#include <drv/driver.h>
 
 // The Kernel class is really just a collection of all the other static kernel objects in one place
 class Kernel
@@ -17,7 +18,9 @@ public:
    VTConsole console;
    MMU mem;
    ACPI acpi;
+   APIC apic;
    InterruptManager interrupts;
+   DriverRoot *rootDriver;
 
    void boot();
 

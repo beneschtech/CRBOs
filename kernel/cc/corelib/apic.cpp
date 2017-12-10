@@ -124,7 +124,6 @@ void APIC::startLocalApic()
 
 void APIC::writeIOApic(u8 index, u32 reg, u32 val)
 {
-    KernelInstance->console.printf("Write IOAPIC: %d %d %x\n",index,reg,val);
     u32 volatile *ioapic = (u32 *)ioApics[index].base;
     ioapic[0] = (reg & 0xff);
     ioapic[4] = val;
@@ -149,7 +148,7 @@ void APIC::setIRQVector(u8 irq, u8 vec, bool mask)
 
     realIRQ -= ioApics[idx].irqBase;
     u8 reg = 0x10 + (realIRQ * 2);
-    u32 ioalo = vec + 0x200; // Vector + system management mode, all other fields, 0 is appropriate
+    u32 ioalo = vec; // + 0x100; // Vector + system management mode, all other fields, 0 is appropriate
     if (mask)
         ioalo |= (1 << 16);
     u32 ioahi = cpuAPICIds[0] << 24;

@@ -21,7 +21,11 @@ struct IDT
 
 static struct IDT myIDT __attribute__ ((aligned(16)));
 
-InterruptManager::~InterruptManager() { }
+InterruptManager::~InterruptManager()
+{
+
+}
+
 InterruptManager::InterruptManager() { }
 
 void InterruptManager::init()
@@ -29,6 +33,7 @@ void InterruptManager::init()
     outb(0xa1,0xff);
     outb(0x21,0xff);
     memset(&myIDT,0,sizeof(IDT));
+    memset(irqTbl,0,sizeof(irqTbl));
     myIDT.size = sizeof(IDTEntry) * 256;
     myIDT.addr = (u64)&myIDT.entries;
     for (int i =1; i < 256; i++)
@@ -55,13 +60,11 @@ void InterruptManager::init()
     setISR(19,ISR_ADDR(isr19));
     setISR(20,ISR_ADDR(isr20));
     setISR(30,ISR_ADDR(isr30));
+
+    setISR(0x21,&InterruptManager::_irqEntry1);
 }
-void InterruptManager::setISR(u8 inum, u64 isr, u16 segment)
+void InterruptManager::setISR(u8 inum, u64 isrAddr, u16 segment)
 {
-    u64 isrAddr = 0;
-    // One of surprisingly few C++ workarounds, it cant cast pointers around like C can,but we can do it in ASM cause
-    // the processor only cares about numbers, like my boss
-    asm volatile ("movq %1,%0":"=r"(isrAddr):"r"(isr));
     struct IDTEntry *isrp = &myIDT.entries[inum];
     isrp->ist = 0;
     isrp->offsetHi = isrAddr >> 32;
@@ -95,6 +98,33 @@ void InterruptManager::renewIDT()
                  "sti"::"m"(myIDT.size));
 }
 
+void InterruptManager::irqChain(u64 irqno)
+{
+    struct irqChainDef *cp = KernelInstance->interrupts.irqTbl[irqno];
+    if (!cp)
+        return;
+    for (u8 i = 0; i < cp->nHooks; i++)
+    {
+        cp->hooks[i]();
+    }
+    KernelInstance->apic.EOI();
+}
+
+void InterruptManager::addDriverToIRQChain(u8 irq, void *driver)
+{
+    if (!irqTbl[irq])
+        irqTbl[irq] = (struct irqChainDef *)kmalloc(sizeof(struct irqChainDef));
+    volatile struct irqChainDef *cp = irqTbl[irq];
+    cp->hooks[cp->nHooks++] =(void(*)())driver;
+}
+
+void InterruptManager::setupIRQs()
+{
+    KernelInstance->apic.startLocalApic();
+    KernelInstance->apic.setIRQVector(1,0x21,0);
+}
+
+// The rest of these are just fatal CPU exceptions, modify after userspace to produce coredump, unless in kernel
 void InterruptManager::isr0()
 {
     printStackTrace("Division by zero",24);

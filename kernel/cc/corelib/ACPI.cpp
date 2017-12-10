@@ -66,10 +66,9 @@ void ACPI::init()
         switch(id)
         {
            case 0x43495041:
-               KernelInstance->console.printf("   Parsing processor info at %p\n",tables[i]);
-               apic = new APIC();
-               KernelInstance->console.printf("     APIC Object at %p\n",apic);
-               apic->parse((void *)tables[i]);
+               KernelInstance->console.printf("   Parsing APIC info at %p\n",tables[i]);
+               KernelInstance->console.printf("     APIC Object at %p\n",&KernelInstance->apic);
+               KernelInstance->apic.parse((void *)tables[i]);
             break;
             default: {}
               // KernelInstance->console.printf("Table type: %x not handled\n",id);
