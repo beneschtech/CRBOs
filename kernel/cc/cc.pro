@@ -4,7 +4,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 CONFIG -= release
 QMAKE_CXXFLAGS_APP -= -fPIC
-QMAKE_CXXFLAGS += -fno-builtin -nostdinc++ -ffreestanding -fno-exceptions -fno-rtti -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -O3
+QMAKE_CXXFLAGS += -fno-builtin -nostdinc++ -ffreestanding -fno-exceptions -fno-rtti -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer -O3 -fno-inline
 QMAKE_LFLAGS = -dN -Ttext=0x102000 -e _Z6_startv -nostdlib
 QMAKE_LINK = ld
 INCLUDEPATH += $$_PRO_FILE_PWD_
@@ -25,7 +25,9 @@ SOURCES += \
     corelib/vm86intr.cpp \
     corelib/apic.cpp \
     drv/driver.cpp \
-    drv/Keyboard.cpp
+    drv/Keyboard.cpp \
+    kerneltask.cpp \
+    drv/Timer.cpp
 
 HEADERS += \
     CRBOs.h \
@@ -39,7 +41,8 @@ HEADERS += \
     corelib/krnlsyms.h \
     corelib/vm86intr.h \
     drv/driver.h \
-    drv/Keyboard.h
+    drv/Keyboard.h \
+    drv/Timer.h
 
 DISTFILES += \
     symbols.awk

@@ -6,6 +6,11 @@
 
 [BITS 64]
 
+SECTION .data
+ALIGN 16
+_fxsave:
+TIMES 512 DB 0
+
 SECTION .text
 ;; Exception Handlers
 global _ZN16InterruptManager7nullISREv:function
@@ -32,7 +37,8 @@ global _ZN16InterruptManager8ISRisr20Ev:function
 global _ZN16InterruptManager8ISRisr30Ev:function
 
 ; IRQ Handlers
-global _ZN16InterruptManager10_irqEntry1Ev:function
+global _Z10_irqEntry0v:function
+global _Z10_irqEntry1v:function
 
 extern _ZN16InterruptManager8irqChainEy
 extern _ZN16InterruptManager4isr0Ev
@@ -56,6 +62,46 @@ extern _ZN16InterruptManager5isr18Ev
 extern _ZN16InterruptManager5isr19Ev
 extern _ZN16InterruptManager5isr20Ev
 extern _ZN16InterruptManager5isr30Ev
+
+%macro pushall64 0
+PUSHFQ
+PUSH RAX
+PUSH RBX
+PUSH RCX
+PUSH RDX
+PUSH RBP
+PUSH RSI
+PUSH RDI
+PUSH R8
+PUSH R9
+PUSH R10
+PUSH R11
+PUSH R12
+PUSH R13
+PUSH R14
+PUSH R15
+FXSAVE [_fxsave]
+%endmacro
+
+%macro popall64 0
+FXRSTOR [_fxsave]
+POP R15
+POP R14
+POP R13
+POP R12
+POP R11
+POP R10
+POP R9
+POP R8
+POP RDI
+POP RSI
+POP RBP
+POP RDX
+POP RCX
+POP RBX
+POP RAX
+POPFQ
+%endmacro
 
 ;; Just does a quick return
 align 16
@@ -176,11 +222,17 @@ _ZN16InterruptManager8ISRisr30Ev:
    IRETQ
 
 align 16
-_ZN16InterruptManager10_irqEntry1Ev:
-   PUSH RBP
-   PUSH R15
+_Z10_irqEntry0v:
+   pushall64
+   XOR RDI,RDI
+   CALL _ZN16InterruptManager8irqChainEy
+   popall64
+   IRETQ
+
+align 16
+_Z10_irqEntry1v:
+   pushall64
    MOV RDI,1
    CALL _ZN16InterruptManager8irqChainEy
-   POP RDI
-   POP RBP
+   popall64
    IRETQ

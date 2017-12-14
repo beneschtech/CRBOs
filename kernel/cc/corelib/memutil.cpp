@@ -20,3 +20,19 @@ void memcpy(void *dst, void *src, u64 len)
     for (u64 i = 0; i < len; i++)
         dm[i] = sm[i];
 }
+
+u64 strlen(char *s)
+{
+    u64 rv = 0;
+    while (*s++)
+    {
+        rv++;
+    }
+    return rv;
+}
+
+bool strequal(char *s1, char *s2)
+{
+    while (*s1++ == *s2++ && *s1 && *s2);
+    return (*s1 == *s2);
+}

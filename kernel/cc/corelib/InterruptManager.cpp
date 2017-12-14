@@ -60,8 +60,6 @@ void InterruptManager::init()
     setISR(19,ISR_ADDR(isr19));
     setISR(20,ISR_ADDR(isr20));
     setISR(30,ISR_ADDR(isr30));
-
-    setISR(0x21,&InterruptManager::_irqEntry1);
 }
 void InterruptManager::setISR(u8 inum, u64 isrAddr, u16 segment)
 {
@@ -121,7 +119,7 @@ void InterruptManager::addDriverToIRQChain(u8 irq, void *driver)
 void InterruptManager::setupIRQs()
 {
     KernelInstance->apic.startLocalApic();
-    KernelInstance->apic.setIRQVector(1,0x21,0);
+    KernelInstance->apic.setIRQVector(1,0x21,false);
 }
 
 // The rest of these are just fatal CPU exceptions, modify after userspace to produce coredump, unless in kernel

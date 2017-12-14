@@ -10,8 +10,7 @@ void _start()
     _mallocBase <<= 5;
     KernelInstance = new Kernel();
     KernelInstance->boot();
-
-    while(1) asm volatile("hlt");
+    KernelInstance->startKernelTask();
 
     delete KernelInstance;
 }

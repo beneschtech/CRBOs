@@ -10,5 +10,8 @@ void *dwtoptr(u32);
 void memcpy(void *dst,void *src,u64 len);
 void *operator new(unsigned long sz);
 void operator delete(void *p);
+u64 strlen(char *s);
+bool strequal(char *s1,char *s2);
+void msleep(u32 ms);
 
 #endif // MEMUTIL_H

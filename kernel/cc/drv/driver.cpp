@@ -1,5 +1,6 @@
 #include <CRBOs.h>
 #include "Keyboard.h"
+#include "Timer.h"
 
 // Sets the parent and next/prev pointers correctly so that we do have a doubly linked list tree format
 
@@ -56,5 +57,6 @@ void Driver::handle()
 void DriverRoot::init()
 {
     KernelInstance->console.printf(" %s\n",type());
+    new Timer(this);
     new DrvKeyboard(this);
 }

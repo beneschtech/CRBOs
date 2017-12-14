@@ -29,11 +29,10 @@ public:
     void addDriverToIRQChain(u8 irq,void *ptr);
     struct irqChainDef *irqTbl[32];
     static void irqChain(u64 irqno);
+
 private:
     void init();
     void nullISR();
-
-    void _irqEntry1();
 
     ISR_FUNCTION(isr0);
     ISR_FUNCTION(isr1);

@@ -8,7 +8,8 @@ void _start();
 Kernel::~Kernel()
 {
     printStackTrace("Kernel Object Destroyed");
-    while (1) ;
+    console.printf("System Halted");
+    asm volatile ("cli\nhlt");
 }
 
 Kernel::Kernel()

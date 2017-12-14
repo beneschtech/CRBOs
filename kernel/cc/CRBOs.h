@@ -23,6 +23,7 @@ public:
    DriverRoot *rootDriver;
 
    void boot();
+   void startKernelTask();
 
 private:
 
