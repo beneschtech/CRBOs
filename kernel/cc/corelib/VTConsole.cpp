@@ -164,6 +164,12 @@ void VTConsole::printf(const char *fmt,...)
             fmt++;
             switch(*fmt)
             {
+            case 'c':
+            {
+                int c = va_arg(l,int);
+                putchar(c & 0xff);
+                break;
+            }
             case 's':
             {
                 char *str = va_arg(l,char *);
